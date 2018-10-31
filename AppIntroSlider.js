@@ -67,6 +67,8 @@ export default class AppIntroSlider extends React.Component {
   _renderButton = (name, onPress) => {
     const show = (name === 'Skip' || name === 'Prev') ? this.props[`show${name}Button`] : !this.props[`hide${name}Button`];
     const content = this.props[`render${name}Button`] ? this.props[`render${name}Button`]() : this._renderDefaultButton(name);
+    if(this.props.slides.beforeNext && name === 'Next')
+      this.props.slides.beforeNext; 
     return show && this._renderOuterButton(content, name, onPress);
   }
 
@@ -84,8 +86,6 @@ export default class AppIntroSlider extends React.Component {
 
   _renderOuterButton = (content, name, onPress) => {
     const style = (name === 'Skip' || name === 'Prev') ? styles.leftButtonContainer : styles.rightButtonContainer;
-    if(this.props.slides.beforeNext && name === 'Next')
-      this.props.slides.beforeNext; 
     return (
       <View style={this.props.bottomButton ? styles.bottomButtonContainer : style}>
         <TouchableOpacity onPress={onPress} style={this.props.bottomButton ? styles.flexOne : this.props.buttonStyle}>
