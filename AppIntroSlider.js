@@ -50,6 +50,8 @@ export default class AppIntroSlider extends React.Component {
     this.goToSlide(this.state.activeIndex + 1);
     this.props.onSlideChange && this.props.onSlideChange(this.state.activeIndex + 1, this.state.activeIndex);
   }
+
+  
   _onPrevPress = () => {
     this.goToSlide(this.state.activeIndex - 1);
     this.props.onSlideChange && this.props.onSlideChange(this.state.activeIndex - 1, this.state.activeIndex);
@@ -64,12 +66,16 @@ export default class AppIntroSlider extends React.Component {
     return this.props.renderItem ? this.props.renderItem(props) : <DefaultSlide {...props} />;
   }
 
-  _renderButton = (name, onPress) => {
+  _renderButton = (name, onPress, beforeNext) => {
     const show = (name === 'Skip' || name === 'Prev') ? this.props[`show${name}Button`] : !this.props[`hide${name}Button`];
     const content = this.props[`render${name}Button`] ? this.props[`render${name}Button`]() : this._renderDefaultButton(name);
-    if(this.props.slides.beforeNext && name === 'Next')
-      this.props.slides.beforeNext;       
-    return show && this._renderOuterButton(content, name, onPress);
+    
+    let newClick;
+    if(this.props.slides[this.state.activeIndex].beforeNext && name === 'Next')    
+       return show && this._renderOuterButton(content, name, () => {this.props.slides[this.state.activeIndex].beforeNext().then( resp => { 
+        this._onNextPress();  return true;})}); 
+    else
+      return show && this._renderOuterButton(content, name, onPress);
   }
 
   _renderDefaultButton = (name) => {
@@ -95,7 +101,7 @@ export default class AppIntroSlider extends React.Component {
     )
   }
 
-  _renderNextButton = () => this._renderButton('Next', this._onNextPress)
+  _renderNextButton = () => this._renderButton('Next', this._onNextPress, this.props.slides.beforeNext)
 
   _renderPrevButton = () => this._renderButton('Prev', this._onPrevPress)
 
@@ -177,6 +183,7 @@ export default class AppIntroSlider extends React.Component {
 
     return (
       <View style={styles.flexOne}>
+        
         <FlatList
           ref={ref => this.flatList = ref}
           data={this.props.slides}
