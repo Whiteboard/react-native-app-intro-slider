@@ -69,8 +69,7 @@ export default class AppIntroSlider extends React.Component {
   _renderButton = (name, onPress, beforeNext) => {
     const show = (name === 'Skip' || name === 'Prev') ? this.props[`show${name}Button`] : !this.props[`hide${name}Button`];
     const content = this.props[`render${name}Button`] ? this.props[`render${name}Button`]() : this._renderDefaultButton(name);
-    
-    let newClick;
+        
     if(this.props.slides[this.state.activeIndex].beforeNext && name === 'Next')    
        return show && this._renderOuterButton(content, name, () => {this.props.slides[this.state.activeIndex].beforeNext().then( resp => { 
         this._onNextPress();  return true;})}); 
